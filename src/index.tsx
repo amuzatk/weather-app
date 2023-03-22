@@ -14,7 +14,7 @@ root.render(
     {/* <Mapbox /> */}
     <App />
     {/* <Map zoom={10}  /> */}
-    {/* <MapboxGeocoderMap /> */}
+    <MapboxGeocoderMap />
 
   </React.StrictMode>
 );

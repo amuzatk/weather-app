@@ -10,34 +10,54 @@
       content="Web site created using create-react-app"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
     <title>React App</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <!-- <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+ 
+<div id="map"></div>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1Ijoia2F6bWF0aWNzIiwiYSI6ImNsZmhjM3dzMDFlenozem56dDZkbmMzNDcifQ.pG2v20o-3o4PmIlRjnfYrg';
+    const map = new mapboxgl.Map({
+    container: 'map',
+
+    style: 'mapbox://styles/mapbox/satellite-streets-v12',
+    center: [146.359, -32.648],
+    zoom: 4
+    });
+     
+    map.addControl(
+    new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+     
+    countries: 'au',
+     
+    bbox: [139.965, -38.03, 155.258, -27.839],
+     
+    filter: function (item) {
+
+    return item.context.some((i) => {
+
+    return (
+    i.id.split('.').shift() === 'region' &&
+    i.text === 'New South Wales'
+    );
+    });
+    },
+    mapboxgl: mapboxgl
+    })
+    );
+    </script> -->
+    
   </body>
 </html>

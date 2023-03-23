@@ -135,7 +135,6 @@ const MapboxGeocoderMap: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<mapboxgl.Map>();
 
-
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -144,7 +143,7 @@ const MapboxGeocoderMap: React.FC = () => {
         container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
         center: [-122.436, 37.77],
-        zoom: 12,
+        zoom: 1,
       });
 
       setMap(newMap);
@@ -161,7 +160,7 @@ const MapboxGeocoderMap: React.FC = () => {
 
         // Define marker and popup
         const marker = new mapboxgl.Marker().setLngLat([-122.436, 37.77]);
-        const popup = new mapboxgl.Popup().setHTML("<h3>Weather Forecast is coming soon!</h3><h3>Tomorrow Weather Forecast is coming soon!</h3>");
+        const popup = new mapboxgl.Popup().setHTML("<div><h3>Weather Forecast is coming soon!</h3><h3>Tomorrow Weather Forecast is coming soon!</h3></div>");
 
 
         // Attach popup to marker
@@ -171,10 +170,14 @@ const MapboxGeocoderMap: React.FC = () => {
         // Add marker to map
         marker.addTo(newMap);
 
+        // marker.on("click", () => {
+        //     popup.addTo(newMap);
+        //   })
+
         // Listen for click event on marker and open popup
-        // marker.addListener("click", () => {
-        //   popup.addTo(newMap);
-        // });
+        marker.on("click", () => {
+           popup.addTo(newMap);
+        });
       });
     };
 
@@ -185,7 +188,7 @@ const MapboxGeocoderMap: React.FC = () => {
 
   return (
     <>
-    <h1>News branch kazzem2 to be deployed</h1>
+    <h1>News branch kazeem2 is back here!!!!</h1>
   <div ref={mapContainerRef} style={{ height: "100vh" }} />
   <App  />
   </>

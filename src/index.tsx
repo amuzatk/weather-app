@@ -12,8 +12,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     {/* <Mapbox /> */}
-    <App />
-    {/* <Map zoom={10}  /> */}
+    {/* <App /> */}
     <MapboxGeocoderMap />
 
   </React.StrictMode>

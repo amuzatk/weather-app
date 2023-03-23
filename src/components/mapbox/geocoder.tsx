@@ -186,7 +186,7 @@ const MapboxGeocoderMap: React.FC = () => {
   return (
     <>
     <h1>News branch kazzem2 to be deployed</h1>
-  {/* <div ref={mapContainerRef} style={{ height: "100vh" }} /> */}
+  <div ref={mapContainerRef} style={{ height: "100vh" }} />
   <App  />
   </>
   )

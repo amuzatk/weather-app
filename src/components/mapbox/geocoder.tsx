@@ -123,7 +123,7 @@
 // export default MapboxGeocoderMap;
 
 import React, { useRef, useEffect, useState } from "react";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, {LngLatLike} from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import App from "../../App";
@@ -134,6 +134,7 @@ import App from "../../App";
 const MapboxGeocoderMap: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<mapboxgl.Map>();
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -142,8 +143,8 @@ const MapboxGeocoderMap: React.FC = () => {
       const newMap = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [-122.436, 37.77],
-        zoom: 1,
+        center: [10, 20],
+        zoom: 3,
       });
 
       setMap(newMap);
@@ -155,11 +156,15 @@ const MapboxGeocoderMap: React.FC = () => {
 
       newMap.addControl(geocoder);
 
+      geocoder.on("result", (event: any) => {
+        setSelectedCity(event.result.place_name);
+      });
+
       newMap.on("load", () => {
         newMap.resize();
 
         // Define marker and popup
-        const marker = new mapboxgl.Marker().setLngLat([-122.436, 37.77]);
+        const marker = new mapboxgl.Marker().setLngLat([10, 20]);
         const popup = new mapboxgl.Popup().setHTML("<div><h3>Weather Forecast is coming soon!</h3><h3>Tomorrow Weather Forecast is coming soon!</h3></div>");
 
 
@@ -169,10 +174,6 @@ const MapboxGeocoderMap: React.FC = () => {
 
         // Add marker to map
         marker.addTo(newMap);
-
-        // marker.on("click", () => {
-        //     popup.addTo(newMap);
-        //   })
 
         // Listen for click event on marker and open popup
         marker.on("click", () => {
@@ -185,6 +186,43 @@ const MapboxGeocoderMap: React.FC = () => {
       initializeMap();
     }
   }, [map]);
+
+  const createMarkerAndPopup = (lngLat: mapboxgl.LngLatLike) => {
+    const marker = new mapboxgl.Marker().setLngLat(lngLat);
+    const popup = new mapboxgl.Popup().setHTML("<h3>Hello World!</h3>");
+
+    marker.setPopup(popup);
+    marker.addTo(map);
+
+    marker.on("click", () => {
+      popup.addTo(map);
+    });
+  };
+
+  useEffect(() => {
+    if (!map || !selectedCity) return;
+
+    map.flyTo({
+      center: [0, 0], // Clear the map first
+      zoom: 1,
+      essential: true,
+    });
+
+    // Use Mapbox Geocoding API to get the coordinates of the selected city
+    fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        selectedCity
+      )}.json?access_token=${mapboxgl.accessToken}&limit=1`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const coordinates = data.features[0].center;
+console.log(data, 'dddd');
+
+        createMarkerAndPopup(coordinates);
+      });
+  }, [map, selectedCity]);
+
 
   return (
     <>

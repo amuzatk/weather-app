@@ -1,97 +1,92 @@
-// import React, { useRef, useEffect, useState } from 'react';
-// import * as mapboxgl from 'mapbox-gl';
-// (mapboxgl as any).accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
+import React, { useRef, useEffect, useState } from "react";
+import mapboxgl, {LngLatLike} from "mapbox-gl";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
-// function App() {
-//   const mapContainer = useRef(null);
-//   const map = useRef(null);
-//   const [lng, setLng] = useState(-70.9);
-//   const [lat, setLat] = useState(42.35);
-//   const [zoom, setZoom] = useState(9);
+// REACT_APP_MAPBOX_ACCESS_TOKEN = 'pk.eyJ1Ijoia2F6bWF0aWNzIiwiYSI6ImNsZms3MzIyZDA4NXI0Nm1jcW5yOTJwbWQifQ.EhcBmsAV3bt0CcffTCdmAw';
+// mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = 'pk.eyJ1Ijoia2F6bWF0aWNzIiwiYSI6ImNsZms3MzIyZDA4NXI0Nm1jcW5yOTJwbWQifQ.EhcBmsAV3bt0CcffTCdmAw';
+console.log(mapboxgl.accessToken);
 
- 
-
-//   useEffect(() => {
-//     if (map.current) return; 
-//     map.current = new mapboxgl.Map({
-//       container: mapContainer.current,
-//       style: 'mapbox://styles/mapbox/streets-v12',
-//       center: [lng, lat],
-//       zoom: zoom
-//     });
-//   });
-
-//   useEffect(() => {
-//     if (!map.current) return; 
-//     map.current.on('move', () => {
-//       setLng(map.current.getCenter().lng.toFixed(4));
-//       setLat(map.current.getCenter().lat.toFixed(4));
-//       setZoom(map.current.getZoom().toFixed(2));
-//     });
-//   });
-
-//   return (
-//     <div className="">
-//       <div className="sidebar">
-//         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
-//       </div>
-//      <div ref={mapContainer} className="map-container" />
-//     </div>
-//   );
-// }
-
-// export default App;
-
-import React, { useEffect, useState } from 'react';
-
-interface Post {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-}
-
-const App = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+const MapboxGeocoderMap: React.FC = () => {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<mapboxgl.Map>();
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-        const data = await response.json();
-        setPosts(data);
-        // console.log(data, 'ddddd');
-        
-      } catch (err) {
-        setError('Error fetching posts.');
-      }
-      setIsLoading(false);
+    if (!mapContainerRef.current) return;
+
+    const initializeMap = () => {
+      const newMap = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [2.3522, 48.8566],
+        zoom: 1,
+      });
+
+      setMap(newMap);
+
+      const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl,
+      });
+
+      newMap.addControl(geocoder);
+
+      geocoder.on("result", (event: any) => {
+        setSelectedCity(event.result.place_name);
+      });
+
+      newMap.on("load", () => {
+        newMap.resize();
+      });
     };
-    fetchPosts();
-  }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+    if (!map) {
+      initializeMap();
+    }
+  }, [map]);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  const createMarkerAndPopup = (lngLat: mapboxgl.LngLatLike) => {
+    const marker = new mapboxgl.Marker().setLngLat(lngLat);
+    const popup = new mapboxgl.Popup().setHTML("<div><h3>Hello York-Goup!</h3><p>Weather Forecasts for today and tomorrow coming soon!!!</p><div>");
 
-  return (
-    <div>
-      {posts.map(post => (
-        <div key={post.id}>
-          <h2>{post.title}</h2>
-          <p>{post.body}</p>
-        </div>
-      ))}
-    </div>
-  );
+    marker.setPopup(popup);
+    marker.addTo(map);
+
+    marker.on("click", () => {
+      popup.addTo(map);
+    });
+  };
+
+  useEffect(() => {
+    if (!map || !selectedCity) return;
+
+    map.flyTo({
+      center: [0, 0], // Clear the map first
+      zoom: 1,
+      essential: true,
+    });
+
+    // Use Mapbox Geocoding API to get the coordinates of the selected city
+    fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        selectedCity
+      )}.json?access_token=${mapboxgl.accessToken}&limit=1`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const coordinates = data.features[0].center;
+console.log(data, 'dddd');
+
+        createMarkerAndPopup(coordinates);
+      });
+  }, [map, selectedCity]);
+
+  return( 
+  <div ref={mapContainerRef} style={{ height: "100vh" }} />
+  )
+
 };
 
-export default App;
-
+export default MapboxGeocoderMap;

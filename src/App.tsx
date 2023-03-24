@@ -63,7 +63,7 @@ const MapboxGeocoderMap: React.FC = () => {
     if (!map || !selectedCity) return;
 
     map.flyTo({
-      center: [0, 0], // Clear the map first
+      center: [0, 0], // Clear the map first.
       zoom: 1,
       essential: true,
     });

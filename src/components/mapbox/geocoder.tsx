@@ -4,7 +4,9 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 // REACT_APP_MAPBOX_ACCESS_TOKEN = 'pk.eyJ1Ijoia2F6bWF0aWNzIiwiYSI6ImNsZms3MzIyZDA4NXI0Nm1jcW5yOTJwbWQifQ.EhcBmsAV3bt0CcffTCdmAw';
-(mapboxgl as any).accessToken = 'pk.eyJ1Ijoia2F6bWF0aWNzIiwiYSI6ImNsZms3MzIyZDA4NXI0Nm1jcW5yOTJwbWQifQ.EhcBmsAV3bt0CcffTCdmAw';
+// mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = 'pk.eyJ1Ijoia2F6bWF0aWNzIiwiYSI6ImNsZms3MzIyZDA4NXI0Nm1jcW5yOTJwbWQifQ.EhcBmsAV3bt0CcffTCdmAw';
+console.log(mapboxgl.accessToken);
 
 const MapboxGeocoderMap: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
